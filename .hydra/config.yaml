@@ -1,0 +1,82 @@
+model_type: Blur
+Blur:
+  model_type: Blur
+  seed: 128
+  device: cuda
+  set_mode: train
+  warm_up: false
+  root_path: None
+  save_path: None
+  code_path: None
+  train_datapath: /export1/project/Jiaming/fixpoint/Data/
+  valid_datapath: /export1/project/Jiaming/fixpoint/Data/
+  test_datapath: /export1/project/Jiaming/fixpoint/Data/
+  kernal_datapath: /export1/project/Jiaming/ZihaoZou/deq_run_deblur/data/kernels/L09.mat
+  multiGPU: true
+  num_gpus: 1
+  GPU_index:
+  - 6
+  - 7
+  dataLoader:
+    num_parallel_calls: -1
+    shuffle: true
+  fwd_train:
+    IMG_Patch:
+    - 256
+    - 256
+    simga: 2.55
+    kernel_tp: k4
+  fwd_valid:
+    IMG_Patch:
+    - 256
+    - 256
+    simga: 2.55
+    kernel_tp: k4
+  fwd_test:
+    IMG_Patch:
+    - 256
+    - 256
+    simga: 2.55
+    kernel_tp: k4
+  cnn_model:
+    network: DnCNN
+    depth: 12
+    n_channels: 64
+    image_channels: 3
+    kernel_size: 3
+    act_fun: ELU
+    norm_fun: null
+    padding: 0
+  unfold_model:
+    num_iter: 100
+    mode: onRED
+    gamma_inti: 1
+    tau_inti: 0.001
+  inference:
+    load_path: null
+  keep_training:
+    load_path: /export1/project/Jiaming/ZihaoZou/model_zoo/color/best5.pt
+  training:
+    loss: l2
+    optimizer: Adam
+    scheduler: Multistep
+    weight_decay: 1.0e-08
+    nesterov: true
+    momentum: 0
+    inti_lr: 0.0005
+    num_train: 0.35
+    batch_size: 20
+    end2end_lr: 0
+    end2end_milstoe: 0
+    end2end_epoch: 0
+    unfold_lr: 0.0005
+    unfold_lr_milstone: 5
+    unfold_epoch: 30
+    save_epoch: 2
+  validating:
+    num_valid: 1
+    batch_size: 8
+  testing:
+    num_volum: 2
+    num_test: 1
+    batch_size: 8

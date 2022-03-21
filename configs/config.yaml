@@ -1,0 +1,99 @@
+# configures the working direction of hydra.
+# If using relative paths, the working directory should be the root folder of SGD-Net.
+hydra:
+  run:
+    dir: '.'
+
+# only CT is supported for now.
+model_type: 'Blur'
+
+Blur:
+  model_type: 'Blur' 
+  seed: 128
+  device: cuda
+  set_mode: train # test/train
+  warm_up: False #training
+  # the root path where to run/store code/outcomes
+  root_path: None 
+  save_path: None
+  # the code path where to copy the running code
+  code_path: None 
+  # the data path
+  train_datapath : /export1/project/Jiaming/fixpoint/Data/
+  valid_datapath : /export1/project/Jiaming/fixpoint/Data/
+  test_datapath : /export1/project/Jiaming/fixpoint/Data/
+  kernal_datapath : /export1/project/Jiaming/ZihaoZou/deq_run_deblur/data/kernels/L09.mat
+  # number of GPUs used for training
+  multiGPU: true
+  num_gpus: 1
+  GPU_index: [6,7]
+  # multi-process loading data
+  dataLoader: 
+    num_parallel_calls: -1 
+    shuffle: true
+  # Parameters for the forward model at training (testing/validating)
+  fwd_train: 
+    IMG_Patch: [256, 256]
+    simga: 2.55
+    kernel_tp: k4 # k2/k4
+  # Parameters for the forward model at inference (validating)
+  fwd_valid: 
+    IMG_Patch: [256, 256]
+    simga: 2.55
+    kernel_tp: k4 # k2/k4
+  # Parameters for the forward model at inference (testing)  
+  fwd_test: 
+    IMG_Patch: [256, 256]
+    simga: 2.55
+    kernel_tp: k4 # k2/k4
+  # CNN (Prior) model/structure
+  cnn_model: 
+    network: DnCNN
+    depth: 12
+    n_channels: 64
+    image_channels : 3
+    kernel_size: 3
+    act_fun: ELU
+    norm_fun: 
+    padding: 0
+  # Unfolding setup (online RED)
+  unfold_model:
+    num_iter: 100
+    mode: onRED # RED/onRED/PnP
+    gamma_inti: 1
+    tau_inti: 0.001
+  # The pre-trained SGD-Net checkpoint
+  inference:
+    load_path: 
+  # The pre-trained SGD-Net checkpoint for
+  keep_training:
+    load_path: /export1/project/Jiaming/ZihaoZou/model_zoo/color/best5.pt
+    #/export/project/jiaming.liu/Projects/potential_SDEQ_MRI/experiements_MRI/Lipz_UNet_MRI/08-Feb-2022-23-25-10UNet_depth_5_sigma_2.0/logs/epoch74_bestSnr_30.78.pth
+  # Set up traning 
+  training:
+    loss: l2
+    optimizer: Adam
+    scheduler: Multistep
+    weight_decay: 1e-8
+    nesterov: true
+    momentum: 0
+    inti_lr: 5e-4
+    #Percent of usage: 0~1.0
+    num_train: 0.35
+    batch_size: 20
+    end2end_lr: 0
+    end2end_milstoe: 0
+    end2end_epoch: 0
+    unfold_lr: 5e-4
+    unfold_lr_milstone: 5
+    unfold_epoch: 30
+    save_epoch: 2
+  # Data to validate
+  validating:
+    num_valid: 1
+    batch_size: 8
+  # Data to test
+  testing:
+    num_volum: 2
+    num_test: 1
+    batch_size: 8
